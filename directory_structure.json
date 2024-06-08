@@ -1,0 +1,722 @@
+{
+    "name": "material-kit-react",
+    "type": "directory",
+    "children": [
+        {
+            "name": "public",
+            "type": "directory",
+            "children": [
+                {
+                    "name": "assets",
+                    "type": "directory",
+                    "children": [
+                        {
+                            "name": "auth-widgets.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar-1.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar-10.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar-11.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar-2.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar-3.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar-4.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar-5.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar-6.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar-7.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar-8.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar-9.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "avatar.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "devias-kit-pro.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "error-401.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "error-404.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "error-500.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "logo--dark.svg",
+                            "type": "file"
+                        },
+                        {
+                            "name": "logo-dropbox.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "logo-emblem--dark.svg",
+                            "type": "file"
+                        },
+                        {
+                            "name": "logo-emblem.svg",
+                            "type": "file"
+                        },
+                        {
+                            "name": "logo-github.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "logo-lyft.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "logo-medium.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "logo-slack.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "logo-squarespace.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "logo.svg",
+                            "type": "file"
+                        },
+                        {
+                            "name": "product-1.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "product-2.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "product-3.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "product-4.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "product-5.png",
+                            "type": "file"
+                        },
+                        {
+                            "name": "thumbnail.png",
+                            "type": "file"
+                        }
+                    ]
+                },
+                {
+                    "name": "favicon.ico",
+                    "type": "file"
+                }
+            ]
+        },
+        {
+            "name": "src",
+            "type": "directory",
+            "children": [
+                {
+                    "name": "app",
+                    "type": "directory",
+                    "children": [
+                        {
+                            "name": "auth",
+                            "type": "directory",
+                            "children": [
+                                {
+                                    "name": "reset-password",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "page.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "sign-in",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "page.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "sign-up",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "page.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "dashboard",
+                            "type": "directory",
+                            "children": [
+                                {
+                                    "name": "account",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "page.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "customers",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "page.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "integrations",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "page.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "settings",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "page.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "layout.tsx",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "page.tsx",
+                                    "type": "file"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "errors",
+                            "type": "directory",
+                            "children": [
+                                {
+                                    "name": "not-found",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "page.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                }
+                            ]
+                        },
+                        {
+                            "name": "layout.tsx",
+                            "type": "file"
+                        },
+                        {
+                            "name": "not-found.tsx",
+                            "type": "file"
+                        },
+                        {
+                            "name": "page.tsx",
+                            "type": "file"
+                        }
+                    ]
+                },
+                {
+                    "name": "components",
+                    "type": "directory",
+                    "children": [
+                        {
+                            "name": "auth",
+                            "type": "directory",
+                            "children": [
+                                {
+                                    "name": "auth-guard.tsx",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "guest-guard.tsx",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "layout.tsx",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "reset-password-form.tsx",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "sign-in-form.tsx",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "sign-up-form.tsx",
+                                    "type": "file"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "core",
+                            "type": "directory",
+                            "children": [
+                                {
+                                    "name": "theme-provider",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "emotion-cache.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "theme-provider.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "chart.tsx",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "localization-provider.tsx",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "logo.tsx",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "no-ssr.tsx",
+                                    "type": "file"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "dashboard",
+                            "type": "directory",
+                            "children": [
+                                {
+                                    "name": "account",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "account-details-form.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "account-info.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "customer",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "customers-filters.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "customers-table.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "integrations",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "integrations-card.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "integrations-filters.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "layout",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "config.ts",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "main-nav.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "mobile-nav.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "nav-icons.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "side-nav.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "user-popover.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "overview",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "budget.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "latest-orders.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "latest-products.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "sales.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "tasks-progress.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "total-customers.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "total-profit.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "traffic.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "settings",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "notifications.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "update-password-form.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                },
+                {
+                    "name": "contexts",
+                    "type": "directory",
+                    "children": [
+                        {
+                            "name": "user-context.tsx",
+                            "type": "file"
+                        }
+                    ]
+                },
+                {
+                    "name": "hooks",
+                    "type": "directory",
+                    "children": [
+                        {
+                            "name": "use-popover.ts",
+                            "type": "file"
+                        },
+                        {
+                            "name": "use-selection.ts",
+                            "type": "file"
+                        },
+                        {
+                            "name": "use-user.ts",
+                            "type": "file"
+                        }
+                    ]
+                },
+                {
+                    "name": "lib",
+                    "type": "directory",
+                    "children": [
+                        {
+                            "name": "auth",
+                            "type": "directory",
+                            "children": [
+                                {
+                                    "name": "client.ts",
+                                    "type": "file"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "default-logger.ts",
+                            "type": "file"
+                        },
+                        {
+                            "name": "get-site-url.ts",
+                            "type": "file"
+                        },
+                        {
+                            "name": "is-nav-item-active.ts",
+                            "type": "file"
+                        },
+                        {
+                            "name": "logger.ts",
+                            "type": "file"
+                        }
+                    ]
+                },
+                {
+                    "name": "styles",
+                    "type": "directory",
+                    "children": [
+                        {
+                            "name": "theme",
+                            "type": "directory",
+                            "children": [
+                                {
+                                    "name": "components",
+                                    "type": "directory",
+                                    "children": [
+                                        {
+                                            "name": "avatar.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "button.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "card-content.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "card-header.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "card.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "components.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "link.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "stack.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "tab.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "table-body.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "table-cell.tsx",
+                                            "type": "file"
+                                        },
+                                        {
+                                            "name": "table-head.tsx",
+                                            "type": "file"
+                                        }
+                                    ]
+                                },
+                                {
+                                    "name": "color-schemes.ts",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "colors.ts",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "create-theme.ts",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "shadows.ts",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "types.d.ts",
+                                    "type": "file"
+                                },
+                                {
+                                    "name": "typography.ts",
+                                    "type": "file"
+                                }
+                            ]
+                        },
+                        {
+                            "name": "global.css",
+                            "type": "file"
+                        }
+                    ]
+                },
+                {
+                    "name": "types",
+                    "type": "directory",
+                    "children": [
+                        {
+                            "name": "nav.d.ts",
+                            "type": "file"
+                        },
+                        {
+                            "name": "user.ts",
+                            "type": "file"
+                        }
+                    ]
+                },
+                {
+                    "name": "config.ts",
+                    "type": "file"
+                },
+                {
+                    "name": "paths.ts",
+                    "type": "file"
+                }
+            ]
+        },
+        {
+            "name": ".editorconfig",
+            "type": "file"
+        },
+        {
+            "name": ".eslintrc.js",
+            "type": "file"
+        },
+        {
+            "name": ".gitattributes",
+            "type": "file"
+        },
+        {
+            "name": ".gitignore",
+            "type": "file"
+        },
+        {
+            "name": "CHANGELOG.md",
+            "type": "file"
+        },
+        {
+            "name": "describe_directory.py",
+            "type": "file"
+        },
+        {
+            "name": "LICENSE.md",
+            "type": "file"
+        },
+        {
+            "name": "next-env.d.ts",
+            "type": "file"
+        },
+        {
+            "name": "next.config.mjs",
+            "type": "file"
+        },
+        {
+            "name": "package.json",
+            "type": "file"
+        },
+        {
+            "name": "pnpm-lock.yaml",
+            "type": "file"
+        },
+        {
+            "name": "prettier.config.mjs",
+            "type": "file"
+        },
+        {
+            "name": "README.md",
+            "type": "file"
+        },
+        {
+            "name": "tsconfig.json",
+            "type": "file"
+        },
+        {
+            "name": "yarn.lock",
+            "type": "file"
+        }
+    ]
+}

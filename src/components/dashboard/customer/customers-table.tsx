@@ -18,10 +18,6 @@ import dayjs from 'dayjs';
 
 import { useSelection } from '@/hooks/use-selection';
 
-function noop(): void {
-  // do nothing
-}
-
 export interface Customer {
   id: string;
   avatar: string;
@@ -37,6 +33,8 @@ interface CustomersTableProps {
   page?: number;
   rows?: Customer[];
   rowsPerPage?: number;
+  onPageChange: (event: unknown, newPage: number) => void;
+  onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
 }
 
 export function CustomersTable({
@@ -44,12 +42,34 @@ export function CustomersTable({
   rows = [],
   page = 0,
   rowsPerPage = 0,
+  onPageChange,
+  onRowsPerPageChange
 }: CustomersTableProps): React.JSX.Element {
   const rowIds = React.useMemo(() => {
-    return rows.map((customer) => customer.id);
+    const ids = rows.map((customer) => customer.id);
+    console.log('rowIds:', ids);
+    return ids;
   }, [rows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
+
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+    console.log('handleSelectAll event:', event);
+    if (event.target.checked) {
+      selectAll();
+    } else {
+      deselectAll();
+    }
+  };
+
+  const handleSelectOne = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
+    console.log('handleSelectOne id:', id);
+    if (event.target.checked) {
+      selectOne(id);
+    } else {
+      deselectOne(id);
+    }
+  };
 
   const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < rows.length;
   const selectedAll = rows.length > 0 && selected?.size === rows.length;
@@ -64,13 +84,7 @@ export function CustomersTable({
                 <Checkbox
                   checked={selectedAll}
                   indeterminate={selectedSome}
-                  onChange={(event) => {
-                    if (event.target.checked) {
-                      selectAll();
-                    } else {
-                      deselectAll();
-                    }
-                  }}
+                  onChange={handleSelectAll}
                 />
               </TableCell>
               <TableCell>Name</TableCell>
@@ -89,13 +103,7 @@ export function CustomersTable({
                   <TableCell padding="checkbox">
                     <Checkbox
                       checked={isSelected}
-                      onChange={(event) => {
-                        if (event.target.checked) {
-                          selectOne(row.id);
-                        } else {
-                          deselectOne(row.id);
-                        }
-                      }}
+                      onChange={(event) => handleSelectOne(event, row.id)}
                     />
                   </TableCell>
                   <TableCell>
@@ -120,8 +128,8 @@ export function CustomersTable({
       <TablePagination
         component="div"
         count={count}
-        onPageChange={noop}
-        onRowsPerPageChange={noop}
+        onPageChange={onPageChange}
+        onRowsPerPageChange={onRowsPerPageChange}
         page={page}
         rowsPerPage={rowsPerPage}
         rowsPerPageOptions={[5, 10, 25]}
