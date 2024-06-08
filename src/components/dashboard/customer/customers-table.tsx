@@ -2,6 +2,7 @@
 
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
+import { styled, keyframes, useTheme, Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
@@ -20,10 +21,15 @@ import { useSelection } from '@/hooks/use-selection';
 
 export interface Customer {
   id: string;
-  avatar: string;
+  avatar?: string;
   name: string;
   email: string;
-  address: { city: string; state: string; country: string; street: string };
+  address: {
+    city: string;
+    state: string;
+    country: string;
+    street: string;
+  };
   phone: string;
   createdAt: Date;
 }
@@ -38,6 +44,32 @@ interface CustomersTableProps {
   onEdit: (customer: Customer) => void;
 }
 
+// Определяем анимацию плавного изменения цвета
+
+export const fadeIn = (theme: Theme) => keyframes`
+  from {
+    background-color: ${theme.palette.primary.light};
+    }
+    to {
+      background-color: ${theme.palette.primary.dark};
+      }
+      `;
+
+export const fadeOut= (theme: Theme) => keyframes`
+  from {
+    background-color: ${theme.palette.primary.dark};
+    }
+    to {
+      background-color: ${theme.palette.primary.light};
+      }
+      `;
+
+const AnimatedAvatar = styled(Avatar)<{ hovered: boolean, theme: Theme }>(({ hovered, theme }) => ({
+  transition: 'transform 0.3s',
+  transform: hovered ? 'scale(1.2)' : 'scale(1)',
+  animation: hovered ? `${fadeIn(theme)} 0.3s forwards` : `${fadeOut(theme)} 0.3s forwards`,
+}));
+
 export function CustomersTable({
   count = 0,
   rows = [],
@@ -47,16 +79,16 @@ export function CustomersTable({
   onRowsPerPageChange,
   onEdit
 }: CustomersTableProps): React.JSX.Element {
+  const theme = useTheme();
+  const [hoveredState, setHoveredState] = React.useState<Record<string, boolean>>({});
+
   const rowIds = React.useMemo(() => {
-    const ids = rows.map((customer) => customer.id);
-    // console.log('rowIds:', ids);
-    return ids;
+    return rows.map((customer) => customer.id);
   }, [rows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    // console.log('handleSelectAll event:', event);
     if (event.target.checked) {
       selectAll();
     } else {
@@ -65,12 +97,15 @@ export function CustomersTable({
   };
 
   const handleSelectOne = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
-    // console.log('handleSelectOne id:', id);
     if (event.target.checked) {
       selectOne(id);
     } else {
       deselectOne(id);
     }
+  };
+
+  const handleHover = (id: string, hovered: boolean) => {
+    setHoveredState((prev) => ({ ...prev, [id]: hovered }));
   };
 
   const selectedSome = (selected?.size ?? 0) > 0 && (selected?.size ?? 0) < rows.length;
@@ -110,13 +145,19 @@ export function CustomersTable({
                   </TableCell>
                   <TableCell>
                     <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} onClick={() => onEdit(row)}/>
+                      <AnimatedAvatar
+                        src={row.avatar}
+                        onClick={() => onEdit(row)}
+                        onMouseEnter={() => handleHover(row.id, true)}
+                        onMouseLeave={() => handleHover(row.id, false)}
+                        hovered={hoveredState[row.id] || false}
+                      />
                       <Typography variant="subtitle2">{row.name}</Typography>
                     </Stack>
                   </TableCell>
                   <TableCell>{row.email}</TableCell>
                   <TableCell>
-                    {row.address.city}, {row.address.state}, {row.address.country}
+                    {[row.address.city, row.address.state, row.address.country].filter(Boolean).join(', ') || 'homeless'}
                   </TableCell>
                   <TableCell>{row.phone}</TableCell>
                   <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
