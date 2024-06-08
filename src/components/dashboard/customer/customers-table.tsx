@@ -35,6 +35,7 @@ interface CustomersTableProps {
   rowsPerPage?: number;
   onPageChange: (event: unknown, newPage: number) => void;
   onRowsPerPageChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onEdit: (customer: Customer) => void;
 }
 
 export function CustomersTable({
@@ -43,18 +44,19 @@ export function CustomersTable({
   page = 0,
   rowsPerPage = 0,
   onPageChange,
-  onRowsPerPageChange
+  onRowsPerPageChange,
+  onEdit
 }: CustomersTableProps): React.JSX.Element {
   const rowIds = React.useMemo(() => {
     const ids = rows.map((customer) => customer.id);
-    console.log('rowIds:', ids);
+    // console.log('rowIds:', ids);
     return ids;
   }, [rows]);
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
 
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
-    console.log('handleSelectAll event:', event);
+    // console.log('handleSelectAll event:', event);
     if (event.target.checked) {
       selectAll();
     } else {
@@ -63,7 +65,7 @@ export function CustomersTable({
   };
 
   const handleSelectOne = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
-    console.log('handleSelectOne id:', id);
+    // console.log('handleSelectOne id:', id);
     if (event.target.checked) {
       selectOne(id);
     } else {
@@ -108,7 +110,7 @@ export function CustomersTable({
                   </TableCell>
                   <TableCell>
                     <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
-                      <Avatar src={row.avatar} />
+                      <Avatar src={row.avatar} onClick={() => onEdit(row)}/>
                       <Typography variant="subtitle2">{row.name}</Typography>
                     </Stack>
                   </TableCell>
