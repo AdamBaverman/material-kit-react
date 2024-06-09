@@ -21,7 +21,7 @@ export function MainNav(): React.JSX.Element {
   const [openNav, setOpenNav] = React.useState<boolean>(false);
 
   const userPopover = usePopover<HTMLDivElement>();
-
+ // прееделать на Drawer и убрать мобильную версию
   return (
     <React.Fragment>
       <Box

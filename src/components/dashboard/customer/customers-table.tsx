@@ -23,6 +23,7 @@ import { useSelection } from '@/hooks/use-selection';
 import { fadeIn, fadeOut } from '@/styles/theme/animations/customer-avatar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CustomersButtons } from '@/components/dashboard/customer/customers-buttons'
+import { CustomersFilters } from '@/components/dashboard/customer/customers-filters';
 
 export interface Customer {
   id: string;
@@ -198,8 +199,9 @@ export function CustomersTable(): React.JSX.Element {
   const paginatedCustomers = applyPagination(customers, queryPage, queryRowsPerPage);
 
   return (
-    <Stack>
-      <CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers} />
+    <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
+      <CustomersFilters ButtonsElement={<CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers} />} />
+      {/* <CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers} /> */}
       <Card>
         <Box sx={{ overflowX: 'auto' }}>
           <Table sx={{ minWidth: '800px' }}>
