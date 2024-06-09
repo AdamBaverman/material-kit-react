@@ -46,6 +46,7 @@ export async function GET(): Promise<NextResponse> {
     ...customer,
     id: customer._id,
   }));
+  console.log('customers', transformedCustomers.length);
   return NextResponse.json(transformedCustomers);
 }
 
