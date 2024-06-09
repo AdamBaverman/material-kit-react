@@ -10,7 +10,7 @@ export const colorSchemes = {
       background: {
         default: 'var(--mui-palette-neutral-950)',
         defaultChannel: '9 10 11',
-        paper: 'var(--mui-palette-neutral-900)',
+        paper: '#0B0D0E',//var(--mui-palette-neutral-900)', https://github.com/devias-io/material-kit-react/issues/163
         level1: 'var(--mui-palette-neutral-800)',
         level2: 'var(--mui-palette-neutral-700)',
         level3: 'var(--mui-palette-neutral-600)',
@@ -76,7 +76,7 @@ export const colorSchemes = {
       background: {
         default: 'var(--mui-palette-common-white)',
         defaultChannel: '255 255 255',
-        paper: 'var(--mui-palette-common-white)',
+        paper: '#ffffff',//'var(--mui-palette-common-white)',
         level1: 'var(--mui-palette-neutral-50)',
         level2: 'var(--mui-palette-neutral-100)',
         level3: 'var(--mui-palette-neutral-200)',

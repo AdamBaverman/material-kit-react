@@ -2,7 +2,7 @@
 
 import * as React from 'react';
 import Avatar from '@mui/material/Avatar';
-import { styled, keyframes, useTheme, Theme } from '@mui/material/styles';
+import { styled, keyframes, useTheme, type Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import Checkbox from '@mui/material/Checkbox';
@@ -18,6 +18,7 @@ import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
 
 import { useSelection } from '@/hooks/use-selection';
+import { type Keyframes } from '@emotion/react';
 
 export interface Customer {
   id: string;
@@ -46,7 +47,7 @@ interface CustomersTableProps {
 
 // Определяем анимацию плавного изменения цвета
 
-export const fadeIn = (theme: Theme) => keyframes`
+export const fadeIn = (theme: Theme): Keyframes => keyframes`
   from {
     background-color: ${theme.palette.primary.light};
     }
@@ -55,7 +56,7 @@ export const fadeIn = (theme: Theme) => keyframes`
       }
       `;
 
-export const fadeOut= (theme: Theme) => keyframes`
+export const fadeOut = (theme: Theme): Keyframes => keyframes`
   from {
     background-color: ${theme.palette.primary.dark};
     }
@@ -64,7 +65,9 @@ export const fadeOut= (theme: Theme) => keyframes`
       }
       `;
 
-const AnimatedAvatar = styled(Avatar)<{ hovered: boolean, theme: Theme }>(({ hovered, theme }) => ({
+const AnimatedAvatar = styled(Avatar, {
+  shouldForwardProp: (prop) => prop !== 'hovered',
+})<{ hovered: boolean; theme: Theme }>(({ hovered, theme }) => ({
   transition: 'transform 0.3s',
   transform: hovered ? 'scale(1.2)' : 'scale(1)',
   animation: hovered ? `${fadeIn(theme)} 0.3s forwards` : `${fadeOut(theme)} 0.3s forwards`,
@@ -88,7 +91,7 @@ export function CustomersTable({
 
   const { selectAll, deselectAll, selectOne, deselectOne, selected } = useSelection(rowIds);
 
-  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>): void => {
     if (event.target.checked) {
       selectAll();
     } else {
@@ -96,7 +99,7 @@ export function CustomersTable({
     }
   };
 
-  const handleSelectOne = (event: React.ChangeEvent<HTMLInputElement>, id: string) => {
+  const handleSelectOne = (event: React.ChangeEvent<HTMLInputElement>, id: string): void => {
     if (event.target.checked) {
       selectOne(id);
     } else {
@@ -104,7 +107,7 @@ export function CustomersTable({
     }
   };
 
-  const handleHover = (id: string, hovered: boolean) => {
+  const handleHover = (id: string, hovered: boolean): void => {
     setHoveredState((prev) => ({ ...prev, [id]: hovered }));
   };
 
@@ -140,17 +143,18 @@ export function CustomersTable({
                   <TableCell padding="checkbox">
                     <Checkbox
                       checked={isSelected}
-                      onChange={(event) => handleSelectOne(event, row.id)}
+                      onChange={(event) => { handleSelectOne(event, row.id); }}
                     />
                   </TableCell>
                   <TableCell>
                     <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
                       <AnimatedAvatar
                         src={row.avatar}
-                        onClick={() => onEdit(row)}
-                        onMouseEnter={() => handleHover(row.id, true)}
-                        onMouseLeave={() => handleHover(row.id, false)}
+                        onClick={() => { onEdit(row); }}
+                        onMouseEnter={() => { handleHover(row.id, true); }}
+                        onMouseLeave={() => { handleHover(row.id, false); }}
                         hovered={hoveredState[row.id] || false}
+                        theme={theme}
                       />
                       <Typography variant="subtitle2">{row.name}</Typography>
                     </Stack>

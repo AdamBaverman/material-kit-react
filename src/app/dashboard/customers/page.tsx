@@ -57,7 +57,24 @@ export default function Page(): React.JSX.Element {
   };
 
   const handleOpen = (customer: Customer | null = null) => {
-    setCurrentCustomer(customer);
+    if (customer) {
+      setCurrentCustomer(customer);
+    } else {
+      setCurrentCustomer({
+        id: '',
+        avatar: '',
+        name: '',
+        email: '',
+        address: {
+          city: '',
+          state: '',
+          country: '',
+          street: ''
+        },
+        phone: '',
+        createdAt: new Date()
+      });
+    }
     setIsEditing(!!customer);
     setOpen(true);
   };
