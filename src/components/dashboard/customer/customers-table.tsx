@@ -24,6 +24,8 @@ import { fadeIn, fadeOut } from '@/styles/theme/animations/customer-avatar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CustomersButtons } from '@/components/dashboard/customer/customers-buttons'
 import { CustomersFilters } from '@/components/dashboard/customer/customers-filters';
+import { AlertDialog } from '@/components/dashboard/utils/AlertDialog';
+import { set } from 'react-hook-form';
 
 export interface Customer {
   id: string;
@@ -55,6 +57,7 @@ export function CustomersTable(): React.JSX.Element {
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(null);
   const [hoveredState, setHoveredState] = React.useState<Record<string, boolean>>({});
+  const [alertOpen, setAlertOpen] = useState(false);
 
   // ===============  CUSTOMER EDITOR  ===============
   const handleOpen = (customer: Customer | null = null): void => {
@@ -80,7 +83,16 @@ export function CustomersTable(): React.JSX.Element {
     setOpen(true);
   };
 
-  const handleClose = (): void => { setOpen(false); }; //TODO add AlertDialog: https://mui.com/material-ui/react-dialog/#system-AlertDialog.tsx
+  const handleClose = (): void => {
+    setOpen(false);
+    };
+    
+  //TODO add AlertDialog: https://mui.com/material-ui/react-dialog/#system-AlertDialog.tsx
+  const handleAlert= (): void => {
+    // Сверить изменения состояний значения полей
+    //...
+    setAlertOpen(true);
+    };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = event.target;
@@ -95,6 +107,7 @@ export function CustomersTable(): React.JSX.Element {
   };
 
   const handleSave = async (): Promise<void> => {
+    setAlertOpen(false); // закрываем уточняющий диалог
     if (!currentCustomer) return;
 
     const { name, phone } = currentCustomer;
@@ -269,7 +282,7 @@ export function CustomersTable(): React.JSX.Element {
           rowsPerPageOptions={[5, 10, 25]}
         />
         {/* CUSTOMER EDITOR */}
-        <Dialog open={open} onClose={handleClose}>
+        <Dialog open={open} onClose={handleAlert}>
           <DialogTitle>{isEditing ? 'Edit Customer' : 'Add New Customer'}</DialogTitle>
           <DialogContent>
             <TextField margin="dense" label="Name" name="name" fullWidth value={currentCustomer?.name || ''} onChange={handleChange} />
@@ -284,6 +297,12 @@ export function CustomersTable(): React.JSX.Element {
             <Button onClick={handleClose}>Cancel</Button>
             <Button onClick={handleSave}>Save</Button>
           </DialogActions>
+          <AlertDialog activate={alertOpen}
+           onClose={handleClose}
+           onConfirm={handleSave}
+           title="Save changes?"
+           content="You have unsaved changes. Do you want to save them?"           
+           />
         </Dialog>
       </Card>
     </Stack>
