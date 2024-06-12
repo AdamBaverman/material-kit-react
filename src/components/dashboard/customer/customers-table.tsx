@@ -56,6 +56,7 @@ export function CustomersTable(): React.JSX.Element {
   const [isEditing, setIsEditing] = useState(false);
   const [customers, setCustomers] = useState<Customer[]>([]);
   const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(null);
+  const [initialCustomer, setInitialCustomer] = useState<Customer | null>(null);
   const [hoveredState, setHoveredState] = React.useState<Record<string, boolean>>({});
   const [alertOpen, setAlertOpen] = useState(false);
 
@@ -63,8 +64,9 @@ export function CustomersTable(): React.JSX.Element {
   const handleOpen = (customer: Customer | null = null): void => {
     if (customer) {
       setCurrentCustomer(customer);
+      setInitialCustomer(customer);
     } else {
-      setCurrentCustomer({
+      const newCustomer = {
         id: '',
         avatar: '',
         name: '',
@@ -77,23 +79,41 @@ export function CustomersTable(): React.JSX.Element {
         },
         phone: '',
         createdAt: new Date()
-      });
+      };
+      setCurrentCustomer(newCustomer);
+      setInitialCustomer(newCustomer);
     }
     setIsEditing(Boolean(customer));
     setOpen(true);
   };
 
+  const isEdited = (): boolean => {
+    console.log('isEdited', {currentCustomer, initialCustomer});
+    return JSON.stringify(currentCustomer) !== JSON.stringify(initialCustomer);
+  };
+
+  const handleAlert = (): void => {
+    if (isEdited()) {
+      setAlertOpen(true);
+    } else {
+      handleClose();
+    }
+  };
+  
+  const handleAlertClose = (): void => {
+    setAlertOpen(false);
+  };
+  
+  const handleAlertConfirm = (): void => {
+    setAlertOpen(false);
+    void handleSave();
+  };
+
   const handleClose = (): void => {
     setOpen(false);
-    };
-    
-  //TODO add AlertDialog: https://mui.com/material-ui/react-dialog/#system-AlertDialog.tsx
-  const handleAlert= (): void => {
-    // Сверить изменения состояний значения полей
-    //...
-    setAlertOpen(true);
-    };
-
+    setAlertOpen(false);
+  };
+ 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = event.target;
     setCurrentCustomer((prev) => {
@@ -107,9 +127,15 @@ export function CustomersTable(): React.JSX.Element {
   };
 
   const handleSave = async (): Promise<void> => {
-    setAlertOpen(false); // закрываем уточняющий диалог
     if (!currentCustomer) return;
 
+    // changes?
+    if (!isEdited()) {
+      console.error('All fields aren\'t changed');
+      return;
+    }
+
+    // validate
     const { name, phone } = currentCustomer;
     if (!name.trim() || !phone.trim()) {
       console.error('All fields are required'); //TODO add error message (red field border)
@@ -171,7 +197,7 @@ export function CustomersTable(): React.JSX.Element {
   const rowIds = React.useMemo(() => {
     return customers.map((customer) => customer.id);
   }, [customers]);
-  
+
   // Прожатие галочек
   const { selectAll, deselectAll, selectOne, deselectOne, selected, selectedAny, selectedAll } = useSelection(rowIds);
   const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -213,7 +239,7 @@ export function CustomersTable(): React.JSX.Element {
 
   return (
     <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-      <CustomersFilters ButtonsElement={<CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers} />} />
+      <CustomersFilters ButtonsElement={<CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers}/>} />
       {/* <CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers} /> */}
       <Card>
         <Box sx={{ overflowX: 'auto' }}>
@@ -227,7 +253,7 @@ export function CustomersTable(): React.JSX.Element {
                     onChange={handleSelectAll}
                   />
                 </TableCell>
-                <TableCell>Name</TableCell>
+                <TableCell>Имя</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Location</TableCell>
                 <TableCell>Phone</TableCell>
@@ -283,9 +309,9 @@ export function CustomersTable(): React.JSX.Element {
         />
         {/* CUSTOMER EDITOR */}
         <Dialog open={open} onClose={handleAlert}>
-          <DialogTitle>{isEditing ? 'Edit Customer' : 'Add New Customer'}</DialogTitle>
+          <DialogTitle>{isEditing ? 'Редактирование' : 'Создание'}</DialogTitle>
           <DialogContent>
-            <TextField margin="dense" label="Name" name="name" fullWidth value={currentCustomer?.name || ''} onChange={handleChange} />
+            <TextField margin="dense" label="Имя" name="name" fullWidth value={currentCustomer?.name || ''} onChange={handleChange} />
             <TextField margin="dense" label="Email" name="email" fullWidth value={currentCustomer?.email || ''} onChange={handleChange} />
             <TextField margin="dense" label="City" name="address.city" fullWidth value={currentCustomer?.address.city || ''} onChange={handleChange} />
             <TextField margin="dense" label="State" name="address.state" fullWidth value={currentCustomer?.address.state || ''} onChange={handleChange} />
@@ -294,15 +320,17 @@ export function CustomersTable(): React.JSX.Element {
             <TextField margin="dense" label="Phone" name="phone" fullWidth value={currentCustomer?.phone || ''} onChange={handleChange} />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Cancel</Button>
-            <Button onClick={handleSave}>Save</Button>
+            <Button onClick={handleClose}>Отмена</Button>
+            <Button disabled={!isEdited()} onClick={handleSave}>Сохранить</Button>
           </DialogActions>
           <AlertDialog activate={alertOpen}
-           onClose={handleClose}
-           onConfirm={handleSave}
-           title="Save changes?"
-           content="You have unsaved changes. Do you want to save them?"           
-           />
+            onClose={handleAlertClose}
+            onConfirm={handleAlertConfirm}
+            title="Продолжить редактирование?"
+            content="У вас есть несохраненные изменения. Вы хотите продолжить?"
+            agreeText="Сохранить и выйти"
+            disagreeText="Вернуться"
+          />
         </Dialog>
       </Card>
     </Stack>
