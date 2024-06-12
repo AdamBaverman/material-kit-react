@@ -25,7 +25,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { CustomersButtons } from '@/components/dashboard/customer/customers-buttons'
 import { CustomersFilters } from '@/components/dashboard/customer/customers-filters';
 import { AlertDialog } from '@/components/dashboard/utils/AlertDialog';
-import { set } from 'react-hook-form';
 
 export interface Customer {
   id: string;
@@ -88,7 +87,7 @@ export function CustomersTable(): React.JSX.Element {
   };
 
   const isEdited = (): boolean => {
-    console.log('isEdited', {currentCustomer, initialCustomer});
+    // console.log('isEdited', {currentCustomer, initialCustomer});
     return JSON.stringify(currentCustomer) !== JSON.stringify(initialCustomer);
   };
 
@@ -189,31 +188,10 @@ export function CustomersTable(): React.JSX.Element {
 
   // хэндлер для загрузки данных
   const handleFetchCustomers = async (): Promise<void> => {
-    console.log('Fetching customers');
+    // console.log('Fetching customers');
     await fetchCustomers();
   };
 
-  // нужно для выбора в чекбоксе (мемоизированный список id)
-  const rowIds = React.useMemo(() => {
-    return customers.map((customer) => customer.id);
-  }, [customers]);
-
-  // Прожатие галочек
-  const { selectAll, deselectAll, selectOne, deselectOne, selected, selectedAny, selectedAll } = useSelection(rowIds);
-  const handleSelectAll = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    if (event.target.checked) {
-      selectAll();
-    } else {
-      deselectAll();
-    }
-  };
-  const handleSelectOne = (event: React.ChangeEvent<HTMLInputElement>, id: string): void => {
-    if (event.target.checked) {
-      selectOne(id);
-    } else {
-      deselectOne(id);
-    }
-  };
   // Анимация аватарки
   const handleHover = (id: string, hovered: boolean): void => {
     setHoveredState((prev) => ({ ...prev, [id]: hovered }));
@@ -246,14 +224,7 @@ export function CustomersTable(): React.JSX.Element {
           <Table sx={{ minWidth: '800px' }}>
             <TableHead>
               <TableRow>
-                <TableCell padding="checkbox">
-                  <Checkbox
-                    checked={selectedAll}
-                    indeterminate={selectedAny}
-                    onChange={handleSelectAll}
-                  />
-                </TableCell>
-                <TableCell>Имя</TableCell>
+                <TableCell sx={{ pl: 9 }}>Имя</TableCell>
                 <TableCell>Email</TableCell>
                 <TableCell>Location</TableCell>
                 <TableCell>Phone</TableCell>
@@ -262,16 +233,9 @@ export function CustomersTable(): React.JSX.Element {
             </TableHead>
             <TableBody>
               {paginatedCustomers.map((row) => {
-                const isSelected = selected?.has(row.id);
 
                 return (
-                  <TableRow hover key={row.id} selected={isSelected}>
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        checked={isSelected}
-                        onChange={(event) => { handleSelectOne(event, row.id); }}
-                      />
-                    </TableCell>
+                  <TableRow hover key={row.id} >
                     <TableCell>
                       <Stack sx={{ alignItems: 'center' }} direction="row" spacing={2}>
                         <AnimatedAvatar
