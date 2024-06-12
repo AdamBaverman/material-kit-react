@@ -19,7 +19,6 @@ import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 
-import { useSelection } from '@/hooks/use-selection';
 import { fadeIn, fadeOut } from '@/styles/theme/animations/customer-avatar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CustomersButtons } from '@/components/dashboard/customer/customers-buttons'
@@ -58,6 +57,7 @@ export function CustomersTable(): React.JSX.Element {
   const [initialCustomer, setInitialCustomer] = useState<Customer | null>(null);
   const [hoveredState, setHoveredState] = React.useState<Record<string, boolean>>({});
   const [alertOpen, setAlertOpen] = useState(false);
+  const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
 
   // ===============  CUSTOMER EDITOR  ===============
   const handleOpen = (customer: Customer | null = null): void => {
@@ -178,6 +178,7 @@ export function CustomersTable(): React.JSX.Element {
       if (response.ok) {
         const data = await response.json();
         setCustomers(data);
+        setAllCustomers(data); // Сохраняем исходный список
       } else {
         console.error('Failed to fetch customers');
       }
@@ -215,9 +216,22 @@ export function CustomersTable(): React.JSX.Element {
   };
   const paginatedCustomers = applyPagination(customers, queryPage, queryRowsPerPage);
 
+  // ================= SEARCH =================
+  const handleSearch = async (name: string): Promise<void> => {
+    if (name.length === 0) {
+      setCustomers(allCustomers); // Reset to original list if search is empty
+      return;
+    }
+    const filteredCustomers = allCustomers.filter((customer) => {
+      const customerName = customer.name.toLowerCase();
+      return customerName.includes(name.toLowerCase());
+    });
+    setCustomers(filteredCustomers);
+  };
+
   return (
     <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-      <CustomersFilters ButtonsElement={<CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers}/>} />
+      <CustomersFilters onSearch={handleSearch} ButtonsElement={<CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers}/>} />
       {/* <CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers} /> */}
       <Card>
         <Box sx={{ overflowX: 'auto' }}>
