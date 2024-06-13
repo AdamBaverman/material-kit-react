@@ -5,7 +5,6 @@ import Avatar from '@mui/material/Avatar';
 import { styled, useTheme, type Theme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
-import Checkbox from '@mui/material/Checkbox';
 import Divider from '@mui/material/Divider';
 import Stack from '@mui/material/Stack';
 import Table from '@mui/material/Table';
@@ -17,18 +16,20 @@ import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
+import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Container } from '@mui/material';
 
 import { fadeIn, fadeOut } from '@/styles/theme/animations/customer-avatar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CustomersButtons } from '@/components/dashboard/customer/customers-buttons'
 import { CustomersFilters } from '@/components/dashboard/customer/customers-filters';
 import { AlertDialog } from '@/components/dashboard/utils/AlertDialog';
+import CustomerEditor from './customer-editor';
 
 export interface Customer {
   id: string;
   avatar?: string;
   name: string;
+  description: string;
   email: string;
   address: {
     city: string;
@@ -60,7 +61,7 @@ export function CustomersTable(): React.JSX.Element {
   const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
 
   // ===============  CUSTOMER EDITOR  ===============
-  const handleOpen = (customer: Customer | null = null): void => {
+  const handleOpen = (customer?: Customer): void => {
     if (customer) {
       setCurrentCustomer(customer);
       setInitialCustomer(customer);
@@ -69,6 +70,7 @@ export function CustomersTable(): React.JSX.Element {
         id: '',
         avatar: '',
         name: '',
+        description: '',
         email: '',
         address: {
           city: '',
@@ -98,11 +100,11 @@ export function CustomersTable(): React.JSX.Element {
       handleClose();
     }
   };
-  
+
   const handleAlertClose = (): void => {
     setAlertOpen(false);
   };
-  
+
   const handleAlertConfirm = (): void => {
     setAlertOpen(false);
     void handleSave();
@@ -112,7 +114,16 @@ export function CustomersTable(): React.JSX.Element {
     setOpen(false);
     setAlertOpen(false);
   };
- 
+
+  /**
+   * Handles changes to the current customer's data.
+   *
+   * This function is called whenever the user updates a field in the customer form. It updates the `currentCustomer` state with the new value from the input event.
+   *
+   * If the input field is a nested property (e.g. `address.city`), the function updates the corresponding nested property in the `currentCustomer` object. Otherwise, it updates the top-level property.
+   *
+   * @param event - The React change event object containing the updated field name and value.
+   */
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = event.target;
     setCurrentCustomer((prev) => {
@@ -125,6 +136,15 @@ export function CustomersTable(): React.JSX.Element {
     });
   };
 
+  /**
+   * Saves the current customer data to the server.
+   *
+   * This function is responsible for handling the save operation for the current customer. It first checks if the customer data has been edited, and if so, it validates the required fields (name and phone). If the validation passes, it sends the updated customer data to the server using a fetch request. Depending on whether the customer is being edited or created, it uses the appropriate HTTP method (PUT or POST).
+   *
+   * If the save operation is successful, the function updates the customers list in the state, either by updating the existing customer or adding a new one. If there is an error, it logs the error to the console.
+   *
+   * @returns {Promise<void>} A Promise that resolves when the save operation is complete.
+   */
   const handleSave = async (): Promise<void> => {
     if (!currentCustomer) return;
 
@@ -135,8 +155,8 @@ export function CustomersTable(): React.JSX.Element {
     }
 
     // validate
-    const { name, phone } = currentCustomer;
-    if (!name.trim() || !phone.trim()) {
+    const { name, description } = currentCustomer;
+    if (!name.trim() || !description.trim()) {
       console.error('All fields are required'); //TODO add error message (red field border)
       return;
     }
@@ -159,8 +179,8 @@ export function CustomersTable(): React.JSX.Element {
         const savedCustomer = await response.json();
         setCustomers((prev) =>
           isEditing
-            ? prev.map((c) => (c.id === savedCustomer.id ? savedCustomer : c))
-            : [...prev, savedCustomer]
+            ? prev.map((c: Customer) => (c.id === savedCustomer.id ? savedCustomer : c))
+            : [...prev, savedCustomer as Customer]
         );
         handleClose();
       } else {
@@ -231,7 +251,7 @@ export function CustomersTable(): React.JSX.Element {
 
   return (
     <Stack spacing={1} sx={{ flex: '1 1 auto' }}>
-      <CustomersFilters onSearch={handleSearch} ButtonsElement={<CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers}/>} />
+      <CustomersFilters onSearch={handleSearch} ButtonsElement={<CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers} />} />
       {/* <CustomersButtons handleOpen={handleOpen} handleFetchCustomers={handleFetchCustomers} /> */}
       <Card>
         <Box sx={{ overflowX: 'auto' }}>
@@ -242,7 +262,7 @@ export function CustomersTable(): React.JSX.Element {
                 <TableCell>Email</TableCell>
                 <TableCell>Location</TableCell>
                 <TableCell>Phone</TableCell>
-                <TableCell>Signed Up</TableCell>
+                <TableCell>Description</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -268,7 +288,8 @@ export function CustomersTable(): React.JSX.Element {
                       {[row.address.city, row.address.state, row.address.country].filter(Boolean).join(', ') || 'homeless'}
                     </TableCell>
                     <TableCell>{row.phone}</TableCell>
-                    <TableCell>{dayjs(row.createdAt).format('MMM D, YYYY')}</TableCell>
+                    <TableCell>{
+                      `${String(row.description).substring(0, 10)}...`}</TableCell>
                   </TableRow>
                 );
               })}
@@ -286,7 +307,7 @@ export function CustomersTable(): React.JSX.Element {
           rowsPerPageOptions={[5, 10, 25]}
         />
         {/* CUSTOMER EDITOR */}
-        <Dialog open={open} onClose={handleAlert}>
+        {/* <Dialog open={open} onClose={handleAlert}>
           <DialogTitle>{isEditing ? 'Редактирование' : 'Создание'}</DialogTitle>
           <DialogContent>
             <TextField margin="dense" label="Имя" name="name" fullWidth value={currentCustomer?.name || ''} onChange={handleChange} />
@@ -296,20 +317,30 @@ export function CustomersTable(): React.JSX.Element {
             <TextField margin="dense" label="Country" name="address.country" fullWidth value={currentCustomer?.address.country || ''} onChange={handleChange} />
             <TextField margin="dense" label="Street" name="address.street" fullWidth value={currentCustomer?.address.street || ''} onChange={handleChange} />
             <TextField margin="dense" label="Phone" name="phone" fullWidth value={currentCustomer?.phone || ''} onChange={handleChange} />
+            <TextField margin="dense" label="Description" name="description" fullWidth value={currentCustomer?.description || ''} onChange={handleChange} />
           </DialogContent>
+          <Container >
+          </Container>
           <DialogActions>
             <Button onClick={handleClose}>Отмена</Button>
             <Button disabled={!isEdited()} onClick={handleSave}>Сохранить</Button>
           </DialogActions>
-          <AlertDialog activate={alertOpen}
-            onClose={handleAlertClose}
-            onConfirm={handleAlertConfirm}
-            title="Продолжить редактирование?"
-            content="У вас есть несохраненные изменения. Вы хотите продолжить?"
-            agreeText="Сохранить и выйти"
-            disagreeText="Вернуться"
-          />
-        </Dialog>
+        </Dialog> */}
+        <CustomerEditor
+          open={open}
+          customer={currentCustomer}
+          isEditing={isEditing}
+          onClose={() => setOpen(false)}
+          onSave={handleSave}
+        />
+        <AlertDialog activate={alertOpen}
+          onClose={handleAlertClose}
+          onConfirm={handleAlertConfirm}
+          title="Продолжить редактирование?"
+          content="У вас есть несохраненные изменения. Вы хотите продолжить?"
+          agreeText="Сохранить и выйти"
+          disagreeText="Вернуться"
+        />
       </Card>
     </Stack>
   );

@@ -1,8 +1,9 @@
 import { NextResponse } from 'next/server';
 import { MongoClient, ObjectId } from 'mongodb';
 import type { Db, Document } from 'mongodb';
+import { env } from 'node:process';
 
-const uri: string = process.env.MONGODB_URI || 'mongodb://localhost:27017/mui';
+const uri: string = env.MONGODB_URI;//|| 'mongodb://localhost:27017/mui';
 if (!uri) {
   throw new Error('Please add your Mongo URI to .env.local');
 }
@@ -12,11 +13,11 @@ const options = {};
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
 
-declare global {
-  var _mongoClientPromise: Promise<MongoClient> | undefined;
-}
+// declare global {
+//   var _mongoClientPromise: Promise<MongoClient>;
+// }
 
-if (process.env.NODE_ENV === 'development') {
+if (env.NODE_ENV === 'development') {
   if (!global._mongoClientPromise) {
     client = new MongoClient(uri, options);
     global._mongoClientPromise = client.connect();
@@ -97,4 +98,16 @@ export async function PUT(request: Request): Promise<NextResponse> {
     console.error('An error occurred during update:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
   }
+}
+
+export async function DELETE(request: Request): Promise<NextResponse> {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
+
+  if (id) {
+    await deleteCustomer(id);
+    return NextResponse.json({ message: 'Customer deleted successfully' });
+  }
+  return NextResponse.json({ error: 'Customer ID is required' }, { status: 400 });
+
 }

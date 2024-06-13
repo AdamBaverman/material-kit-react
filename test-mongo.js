@@ -1,13 +1,17 @@
+// import { env } from 'node:process';
+
 const { MongoClient } = require('mongodb');
 require('dotenv').config(); // Для загрузки переменных окружения из .env файла
 
-// const uri = process.env.MONGODB_URI;
-const uri = 'mongodb://localhost:27017/mui';
+let uri = process.env.MONGODB_URI;
 
 if (!uri) {
-    throw new Error('Please add your Mongo URI to .env file');
-}
+    console.error('Please add your Mongo URI to .env file');
+    // throw new Error('Please add your Mongo URI to .env file');
+    }
 
+uri = 'mongodb://localhost:27017/mui';
+    
 async function run() {
     const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
     try {
