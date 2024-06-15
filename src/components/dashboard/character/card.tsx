@@ -41,14 +41,16 @@ function DynamicForm({ control }): React.JSX.Element {
       {fields.map((field, index) => (
         <Box key={field.id} display="flex" alignItems="center">
           <Controller
-            name={`extraFields[${index}].key`}
-            control={control}
-            render={({ field }) => <TextField {...field} label="Key" variant="outlined" margin="normal" disabled />}
-          />
-          <Controller
             name={`extraFields[${index}].value`}
             control={control}
-            render={({ field }) => <TextField {...field} label="Value" variant="outlined" margin="normal" />}
+            render={({ field: controllerField }) => (
+              <TextField
+                {...controllerField}
+                label={availableFields.find((f) => f.key === field.key)?.label || 'Value'}
+                variant="outlined"
+                margin="normal"
+              />
+            )}
           />
           <Button type="button" onClick={() => remove(index)}>Delete</Button>
         </Box>

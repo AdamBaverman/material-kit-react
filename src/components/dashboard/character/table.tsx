@@ -1,37 +1,79 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import DynamicForm from './card';
+import axios from 'axios';
 
-const rows = [
-  { id: 1, name: 'Item 1', description: 'Description 1', extraFields: [{ key: 'field1', value: 'value1' }] },
-  { id: 2, name: 'Item 2', description: 'Description 2', extraFields: [{ key: 'field2', value: 'value2' }] },
-];
+// const rows = [
+//   { id: 1, name: 'Item 1', description: 'Description 1', extraFields: [{ key: 'field1', value: 'value1' }] },
+//   { id: 2, name: 'Item 2', description: 'Description 2', extraFields: [{ key: 'field2', value: 'value2' }] },
+// ];
 
-const columns = [
-  { field: 'name', headerName: 'Name', width: 150 },
-  { field: 'description', headerName: 'Description', width: 200 },
-];
+// const columns = [
+//   { field: 'name', headerName: 'Name', width: 150 },
+//   { field: 'description', headerName: 'Description', width: 200 },
+// ];
 
-const EditableTable = () => {
+const schema = z.object({
+  name: z.string().min(1, 'Name is required'),
+  description: z.string().min(1, 'Description is required'),
+  extraFields: z.array(z.object({
+    key: z.string(),
+    value: z.string().min(1, 'Value is required'),
+  })),
+});
+
+function EditableTable(): React.ReactElement {
   const [open, setOpen] = useState(false);
   const [selectedRow, setSelectedRow] = useState(null);
-  const { control, handleSubmit, reset } = useForm();
+  const { control, handleSubmit, reset } = useForm({
+    resolver: zodResolver(schema),
+  });
+  const [columns, setColumns] = useState([
+    { field: 'name', headerName: 'Name', width: 150 },
+    { field: 'description', headerName: 'Description', width: 200 },
+  ]);
+  const [rows, setRows] = useState([]);
 
-  const handleRowClick = (row) => {
+  useEffect(() => {
+    const fetchColumns = async (): Promise<void> => {
+      try {
+        const response = await axios.get('/api/character/columns');
+        setColumns(response.data);
+      } catch (error) {
+        console.error('Error fetching columns:', error);
+      }
+    };
+
+    const fetchRows = async (): Promise<void> => {
+      try {
+        const response = await axios.get('/api/character/rows');
+        setRows(response.data);
+      } catch (error) {
+        console.error('Error fetching rows:', error);
+      }
+    };
+
+    fetchColumns();
+    // fetchRows();
+  }, []);
+  
+  const handleRowClick = (row): void => {
     setSelectedRow(row);
     reset(row);
     setOpen(true);
   };
 
-  const handleClose = () => {
+  const handleClose = (): void => {
     setOpen(false);
   };
 
-  const onSubmit = (data) => {
+  const onSubmit = (data): void => {
     console.log(data);
     handleClose();
   };
@@ -63,6 +105,6 @@ const EditableTable = () => {
       </Dialog>
     </Box>
   );
-};
+}
 
 export default EditableTable;
