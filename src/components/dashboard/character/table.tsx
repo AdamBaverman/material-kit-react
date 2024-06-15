@@ -4,10 +4,11 @@ import React, { useState } from 'react';
 import { DataGrid } from '@mui/x-data-grid';
 import { Box, Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
+import DynamicForm from './card';
 
 const rows = [
-  { id: 1, name: 'Item 1', description: 'Description 1' },
-  { id: 2, name: 'Item 2', description: 'Description 2' },
+  { id: 1, name: 'Item 1', description: 'Description 1', extraFields: [{ key: 'field1', value: 'value1' }] },
+  { id: 2, name: 'Item 2', description: 'Description 2', extraFields: [{ key: 'field2', value: 'value2' }] },
 ];
 
 const columns = [
@@ -52,7 +53,7 @@ const EditableTable = () => {
               control={control}
               render={({ field }) => <TextField {...field} label="Description" fullWidth margin="normal" />}
             />
-            {/* Add more fields as needed */}
+            <DynamicForm control={control} />
             <DialogActions>
               <Button onClick={handleClose}>Cancel</Button>
               <Button type="submit">Save</Button>

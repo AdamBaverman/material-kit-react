@@ -1,46 +1,60 @@
-import React from 'react';
-import { useForm, useFieldArray, Controller } from 'react-hook-form';
-import { Box, Button, TextField, Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import React, { useState } from 'react';
+import { useFieldArray, Controller } from 'react-hook-form';
+import { Box, Button, TextField, Autocomplete } from '@mui/material';
 
-const DynamicForm = () => {
-  const { control, handleSubmit, register } = useForm({
-    defaultValues: {
-      items: [{ name: '', value: '' }],
-    },
-  });
+const availableFields = [
+  { key: 'field1', label: 'Field 1' },
+  { key: 'field2', label: 'Field 2' },
+  { key: 'field3', label: 'Field 3' },
+];
 
+function DynamicForm({ control }): React.JSX.Element {
   const { fields, append, remove } = useFieldArray({
     control,
-    name: 'items',
+    name: 'extraFields',
   });
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const [selectedFields, setSelectedFields] = useState([]);
+
+  const handleAddFields = () => {
+    selectedFields.forEach((field) => {
+      append({ key: field.key, value: '' });
+    });
+    setSelectedFields([]);
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)}>
+    <div>
+      <Autocomplete
+        multiple
+        options={availableFields}
+        getOptionLabel={(option) => option.label}
+        value={selectedFields}
+        onChange={(event, newValue) => {
+          setSelectedFields(newValue);
+        }}
+        renderInput={(params) => <TextField {...params} label="Select Fields" variant="outlined" margin="normal" />}
+      />
+      <Button type="button" onClick={handleAddFields} disabled={selectedFields.length === 0}>
+        Add Fields
+      </Button>
       {fields.map((field, index) => (
         <Box key={field.id} display="flex" alignItems="center">
           <Controller
-            name={`items[${index}].name`}
+            name={`extraFields[${index}].key`}
             control={control}
-            render={({ field }) => <TextField {...field} label="Name" variant="outlined" margin="normal" />}
+            render={({ field }) => <TextField {...field} label="Key" variant="outlined" margin="normal" disabled />}
           />
           <Controller
-            name={`items[${index}].value`}
+            name={`extraFields[${index}].value`}
             control={control}
             render={({ field }) => <TextField {...field} label="Value" variant="outlined" margin="normal" />}
           />
           <Button type="button" onClick={() => remove(index)}>Delete</Button>
         </Box>
       ))}
-      <Button type="button" onClick={() => append({ name: '', value: '' })}>
-        Add Item
-      </Button>
-      <Button type="submit">Submit</Button>
-    </form>
+    </div>
   );
-};
+}
 
 export default DynamicForm;
