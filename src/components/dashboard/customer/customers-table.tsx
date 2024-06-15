@@ -14,15 +14,12 @@ import TableHead from '@mui/material/TableHead';
 import TablePagination from '@mui/material/TablePagination';
 import TableRow from '@mui/material/TableRow';
 import Typography from '@mui/material/Typography';
-import dayjs from 'dayjs';
 import { useState } from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField, Container } from '@mui/material';
 
 import { fadeIn, fadeOut } from '@/styles/theme/animations/customer-avatar';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { CustomersButtons } from '@/components/dashboard/customer/customers-buttons'
 import { CustomersFilters } from '@/components/dashboard/customer/customers-filters';
-import { AlertDialog } from '@/components/dashboard/utils/AlertDialog';
 import CustomerEditor from './customer-editor';
 
 export interface Customer {
@@ -30,15 +27,14 @@ export interface Customer {
   avatar?: string;
   name: string;
   description: string;
-  email: string;
-  address: {
-    city: string;
-    state: string;
-    country: string;
-    street: string;
+  email?: string;
+  address?: {
+    city?: string;
+    state?: string;
+    country?: string;
+    street?: string;
   };
-  phone: string;
-  createdAt: Date;
+  phone?: string;
 }
 
 const AnimatedAvatar = styled(Avatar, {
@@ -51,146 +47,140 @@ const AnimatedAvatar = styled(Avatar, {
 
 export function CustomersTable(): React.JSX.Element {
   const theme = useTheme();
-  const [open, setOpen] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
   const [customers, setCustomers] = useState<Customer[]>([]);
-  const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(null);
-  const [initialCustomer, setInitialCustomer] = useState<Customer | null>(null);
   const [hoveredState, setHoveredState] = React.useState<Record<string, boolean>>({});
-  const [alertOpen, setAlertOpen] = useState(false);
   const [allCustomers, setAllCustomers] = useState<Customer[]>([]);
 
   // ===============  CUSTOMER EDITOR  ===============
-  const handleOpen = (customer?: Customer): void => {
-    if (customer) {
-      setCurrentCustomer(customer);
-      setInitialCustomer(customer);
-    } else {
-      const newCustomer = {
-        id: '',
-        avatar: '',
-        name: '',
-        description: '',
-        email: '',
-        address: {
-          city: '',
-          state: '',
-          country: '',
-          street: ''
-        },
-        phone: '',
-        createdAt: new Date()
-      };
-      setCurrentCustomer(newCustomer);
-      setInitialCustomer(newCustomer);
-    }
-    setIsEditing(Boolean(customer));
-    setOpen(true);
-  };
+  // const handleOpen = (customer?: Customer): void => {
+  //   if (customer) {
+  //     setCurrentCustomer(customer);
+  //     setInitialCustomer(customer);
+  //   } else {
+  //     const newCustomer = {
+  //       id: '',
+  //       // avatar: '',
+  //       name: '',
+  //       description: '',
+  //       // email: '',
+  //       // address: {
+  //       //   city: '',
+  //       //   state: '',
+  //       //   country: '',
+  //       //   street: ''
+  //       // },
+  //       // phone: ''
+  //     };
+  //     setCurrentCustomer(newCustomer);
+  //     setInitialCustomer(newCustomer);
+  //   }
+  //   setIsEditing(Boolean(customer));
+  //   setOpen(true);
+  // };
 
-  const isEdited = (): boolean => {
-    // console.log('isEdited', {currentCustomer, initialCustomer});
-    return JSON.stringify(currentCustomer) !== JSON.stringify(initialCustomer);
-  };
+  // const isEdited = (): boolean => {
+  //   // console.log('isEdited', {currentCustomer, initialCustomer});
+  //   return JSON.stringify(currentCustomer) !== JSON.stringify(initialCustomer);
+  // };
 
-  const handleAlert = (): void => {
-    if (isEdited()) {
-      setAlertOpen(true);
-    } else {
-      handleClose();
-    }
-  };
+  // const handleAlert = (): void => {
+  //   if (isEdited()) {
+  //     setAlertOpen(true);
+  //   } else {
+  //     handleClose();
+  //   }
+  // };
 
-  const handleAlertClose = (): void => {
-    setAlertOpen(false);
-  };
+  // const handleAlertClose = (): void => {
+  //   setAlertOpen(false);
+  // };
 
-  const handleAlertConfirm = (): void => {
-    setAlertOpen(false);
-    void handleSave();
-  };
+  // const handleAlertConfirm = (): void => {
+  //   setAlertOpen(false);
+  //   void handleSave();
+  // };
 
-  const handleClose = (): void => {
-    setOpen(false);
-    setAlertOpen(false);
-  };
+  // const handleClose = (): void => {
+  //   setOpen(false);
+  //   setAlertOpen(false);
+  // };
 
-  /**
-   * Handles changes to the current customer's data.
-   *
-   * This function is called whenever the user updates a field in the customer form. It updates the `currentCustomer` state with the new value from the input event.
-   *
-   * If the input field is a nested property (e.g. `address.city`), the function updates the corresponding nested property in the `currentCustomer` object. Otherwise, it updates the top-level property.
-   *
-   * @param event - The React change event object containing the updated field name and value.
-   */
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-    const { name, value } = event.target;
-    setCurrentCustomer((prev) => {
-      if (!prev) return null;
-      const [mainKey, subKey] = name.split('.');
-      if (subKey) {
-        return { ...prev, [mainKey]: { ...prev[mainKey], [subKey]: value } };
-      }
-      return { ...prev, [name]: value };
-    });
-  };
+  // /**
+  //  * Handles changes to the current customer's data.
+  //  *
+  //  * This function is called whenever the user updates a field in the customer form. It updates the `currentCustomer` state with the new value from the input event.
+  //  *
+  //  * If the input field is a nested property (e.g. `address.city`), the function updates the corresponding nested property in the `currentCustomer` object. Otherwise, it updates the top-level property.
+  //  *
+  //  * @param event - The React change event object containing the updated field name and value.
+  //  */
+  // const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
+  //   const { name, value } = event.target;
+  //   setCurrentCustomer((prev) => {
+  //     if (!prev) return null;
+  //     const [mainKey, subKey] = name.split('.');
+  //     if (subKey) {
+  //       return { ...prev, [mainKey]: { ...prev[mainKey], [subKey]: value } };
+  //     }
+  //     return { ...prev, [name]: value };
+  //   });
+  // };
 
-  /**
-   * Saves the current customer data to the server.
-   *
-   * This function is responsible for handling the save operation for the current customer. It first checks if the customer data has been edited, and if so, it validates the required fields (name and phone). If the validation passes, it sends the updated customer data to the server using a fetch request. Depending on whether the customer is being edited or created, it uses the appropriate HTTP method (PUT or POST).
-   *
-   * If the save operation is successful, the function updates the customers list in the state, either by updating the existing customer or adding a new one. If there is an error, it logs the error to the console.
-   *
-   * @returns {Promise<void>} A Promise that resolves when the save operation is complete.
-   */
-  const handleSave = async (): Promise<void> => {
-    if (!currentCustomer) return;
+  // /**
+  //  * Saves the current customer data to the server.
+  //  *
+  //  * This function is responsible for handling the save operation for the current customer. It first checks if the customer data has been edited, and if so, it validates the required fields (name and phone). If the validation passes, it sends the updated customer data to the server using a fetch request. Depending on whether the customer is being edited or created, it uses the appropriate HTTP method (PUT or POST).
+  //  *
+  //  * If the save operation is successful, the function updates the customers list in the state, either by updating the existing customer or adding a new one. If there is an error, it logs the error to the console.
+  //  *
+  //  * @returns {Promise<void>} A Promise that resolves when the save operation is complete.
+  //  */
+  // const handleSave = async (): Promise<void> => {
+  //   if (!currentCustomer) return;
 
-    // changes?
-    if (!isEdited()) {
-      console.error('All fields aren\'t changed');
-      return;
-    }
+  //   // changes?
+  //   if (!isEdited()) {
+  //     console.error('All fields aren\'t changed');
+  //     return;
+  //   }
 
-    // validate
-    const { name, description } = currentCustomer;
-    if (!name.trim() || !description.trim()) {
-      console.error('All fields are required'); //TODO add error message (red field border)
-      return;
-    }
+  //   // validate
+  //   const { name, description } = currentCustomer;
+  //   if (!name.trim() || !description.trim()) {
+  //     console.error('All fields are required'); //TODO add error message (red field border)
+  //     return;
+  //   }
 
-    const payload = {
-      ...currentCustomer,
-      id: currentCustomer.id || undefined,
-    };
+  //   const payload = {
+  //     ...currentCustomer,
+  //     id: currentCustomer.id || undefined,
+  //   };
 
-    try {
-      const response = await fetch('/api/customers', {
-        method: isEditing ? 'PUT' : 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(payload),
-      });
+  //   try {
+  //     const response = await fetch('/api/customers', {
+  //       method: isEditing ? 'PUT' : 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify(payload),
+  //     });
 
-      if (response.ok) {
-        const savedCustomer = await response.json();
-        setCustomers((prev) =>
-          isEditing
-            ? prev.map((c: Customer) => (c.id === savedCustomer.id ? savedCustomer : c))
-            : [...prev, savedCustomer as Customer]
-        );
-        handleClose();
-      } else {
-        const errorData = await response.json();
-        console.error('Failed to save customer:', errorData);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
-  };
+  //     if (response.ok) {
+  //       const savedCustomer = await response.json();
+  //       setCustomers((prev) =>
+  //         isEditing
+  //           ? prev.map((c: Customer) => (c.id === savedCustomer.id ? savedCustomer : c))
+  //           : [...prev, savedCustomer as Customer]
+  //       );
+  //       handleClose();
+  //     } else {
+  //       const errorData = await response.json();
+  //       console.error('Failed to save customer:', errorData);
+  //     }
+  //   } catch (error) {
+  //     console.error('An error occurred:', error);
+  //   }
+  // };
   // обращение к api
   const fetchCustomers = async (): Promise<void> => {
     try {
@@ -327,19 +317,14 @@ export function CustomersTable(): React.JSX.Element {
           </DialogActions>
         </Dialog> */}
         <CustomerEditor
-          open={open}
+          // open={open}
           customer={currentCustomer}
-          isEditing={isEditing}
-          onClose={() => setOpen(false)}
-          onSave={handleSave}
-        />
-        <AlertDialog activate={alertOpen}
-          onClose={handleAlertClose}
-          onConfirm={handleAlertConfirm}
-          title="Продолжить редактирование?"
-          content="У вас есть несохраненные изменения. Вы хотите продолжить?"
-          agreeText="Сохранить и выйти"
-          disagreeText="Вернуться"
+          // isEditing={isEditing}
+          // isEdited={isEdited()}
+          // onClose={handleAlert}
+          // onSave={handleSave}
+          // onChange={handleChange}
+          // onCancel={handleClose}
         />
       </Card>
     </Stack>
