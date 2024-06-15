@@ -9,10 +9,12 @@ if (!uri) {
 
 const connectDB = async () => {
   try {
-    await connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await connect(uri
+    //     , {
+    //   useNewUrlParser: true,
+    //   useUnifiedTopology: true,
+    // }
+);
     console.log('MongoDB connected');
   } catch (error) {
     console.error('MongoDB connection error:', error);
