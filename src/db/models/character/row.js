@@ -1,10 +1,10 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 import Counter from './counter';
 
 const rowSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
-  cid: { type: Number, required: true, unique: true },
+  cid: { type: Number, required: false, unique: true },
   extraFields: { type: Map, of: String }, // Динамические поля
 }, { timestamps: true });
 
@@ -21,6 +21,6 @@ rowSchema.pre('save', async function preSave(next) {
   next();
 });
 
-const Row = model('Row', rowSchema);
+const Row = models.cards || model('cards', rowSchema);
 
 export default Row;

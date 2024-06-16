@@ -1,4 +1,4 @@
-import { Schema, model } from 'mongoose';
+import { Schema, model, models } from 'mongoose';
 
 const columnSchema = new Schema({
   field: { type: String, required: true },
@@ -6,6 +6,6 @@ const columnSchema = new Schema({
   width: { type: Number, required: true },
 });
 
-const Column = model('Column', columnSchema);
+const Column = models.columns || model('columns', columnSchema);
 
 export default Column;
