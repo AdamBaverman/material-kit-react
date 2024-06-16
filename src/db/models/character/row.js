@@ -5,7 +5,7 @@ const rowSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   cid: { type: Number, required: false, unique: true },
-  extraFields: { type: Map, of: String }, // Динамические поля
+  fields: { type: Map, of: Schema.Types.Mixed }, // Поля персонажа в виде объекта ключ-значение
 }, { timestamps: true });
 
 // Генерация cid

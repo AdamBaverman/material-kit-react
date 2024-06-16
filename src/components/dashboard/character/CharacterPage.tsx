@@ -32,8 +32,12 @@ function CharacterPage(): React.JSX.Element {
     
     const fetchTemplates = async (): Promise<void> => {
         const response = await axios.get<Template[]>('/api/character/templates');
-        setTemplates([...templates, ...response.data]);
-    };
+        const templatesWithFields = response.data.map((template) => ({
+          ...template,
+      fields: fields.filter((iField) => template.fields.includes(iField)), //iField.name ?
+        }));
+        setTemplates([...templates, ...templatesWithFields]);
+      };
     
     const fetchFields = async (): Promise<void> => {
         const response = await axios.get<Field[]>('/api/character/columns');
@@ -91,7 +95,7 @@ function CharacterPage(): React.JSX.Element {
             <CharacterForm
                 open={isCharacterFormOpen}
                 character={selectedCharacter}
-                fields={selectedCharacter?.fields || [...(selectedTemplate?.fields || []), ...fields]}
+                fields={fields}
                 onSave={handleSaveCharacter}
                 onCancel={handleCloseCharacterForm}
             />
