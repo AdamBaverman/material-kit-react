@@ -13,9 +13,9 @@ function TemplateSelector({ open, templates, onSelect, onCancel }: TemplateSelec
     const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
 
     const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
-        const templateId = event.target.value;
-        const template = templates.find((t) => t.id === parseInt(templateId));
-        setSelectedTemplate(template || null);
+        const templateId = parseInt(event.target.value, 10);
+        const template = templates.find((t) => t.id === templateId) || null;
+        setSelectedTemplate(template);
     };
 
     const handleNext = (): void => {
@@ -28,16 +28,20 @@ function TemplateSelector({ open, templates, onSelect, onCancel }: TemplateSelec
         <Dialog open={open} onClose={onCancel}>
             <DialogTitle>Выберите шаблон</DialogTitle>
             <DialogContent>
-                <RadioGroup value={selectedTemplate?.id || ''} onChange={handleChange}>
-                    {templates.map((template) => (
-                        <FormControlLabel
-                            key={template.id}
-                            value={template.id}
-                            control={<Radio />}
-                            label={template.name}
-                        />
-                    ))}
-                </RadioGroup>
+                {templates && templates.length > 0 ? (
+                    <RadioGroup value={selectedTemplate?.id || ''} onChange={handleChange}>
+                        {templates.map((template) => (
+                            <FormControlLabel
+                                key={template.id}
+                                value={template.id}
+                                control={<Radio />}
+                                label={template.name}
+                            />
+                        ))}
+                    </RadioGroup>
+                ) : (
+                    <div>Нет доступных шаблонов</div>
+                )}
             </DialogContent>
             <DialogActions>
                 <Button onClick={onCancel}>Отмена</Button>

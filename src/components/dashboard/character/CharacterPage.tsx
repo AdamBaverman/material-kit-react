@@ -7,38 +7,33 @@ import CharacterForm from './CharacterForm';
 import TemplateSelector from './TemplateSelector';
 import { type Character, type Template, type Field } from '@/types';
 
+const defaultTemplate: Template = { id: -1, name: 'По умолчанию', fields: [] };
+
 function CharacterPage(): React.JSX.Element {
+    const [templates, setTemplates] = useState<Template[]>([defaultTemplate]);
     const [characters, setCharacters] = useState<Character[]>([]);
-    const [templates, setTemplates] = useState<Template[]>([
-        { id: -1, name: 'По умолчанию', fields: [] },
-    ]);
     const [fields, setFields] = useState<Field[]>([]);
     const [selectedCharacter, setSelectedCharacter] = useState<Character | null>(null);
     const [selectedTemplate, setSelectedTemplate] = useState<Template | null>(null);
     const [isTemplateSelectorOpen, setIsTemplateSelectorOpen] = useState(false);
     const [isCharacterFormOpen, setIsCharacterFormOpen] = useState(false);
 
-
     useEffect(() => {
         void fetchCharacters();
         void fetchTemplates();
         void fetchFields();
     }, []);
-    
+
     const fetchCharacters = async (): Promise<void> => {
         const response = await axios.get<Character[]>('/api/character');
         setCharacters(response.data);
     };
-    
+
     const fetchTemplates = async (): Promise<void> => {
         const response = await axios.get<Template[]>('/api/character/templates');
-        const templatesWithFields = response.data.map((template) => ({
-          ...template,
-      fields: fields.filter((iField) => template.fields.includes(iField)), //iField.name ?
-        }));
-        setTemplates([...templates, ...templatesWithFields]);
-      };
-    
+        setTemplates([defaultTemplate, ...response.data]);
+    };
+
     const fetchFields = async (): Promise<void> => {
         const response = await axios.get<Field[]>('/api/character/columns');
         setFields(response.data);
@@ -46,8 +41,13 @@ function CharacterPage(): React.JSX.Element {
 
     const handleCreate = (): void => {
         setSelectedCharacter(null);
-        setSelectedTemplate(null);
+        setSelectedTemplate(defaultTemplate);
         setIsTemplateSelectorOpen(true);
+    };
+
+    const handleEdit = (character: Character): void => {
+        setSelectedCharacter(character);
+        setIsCharacterFormOpen(true);
     };
 
     const handleSelectTemplate = (template: Template): void => {
@@ -61,12 +61,9 @@ function CharacterPage(): React.JSX.Element {
     };
 
     const handleCloseCharacterForm = (): void => {
+        setSelectedCharacter(null);
+        setSelectedTemplate(defaultTemplate);
         setIsCharacterFormOpen(false);
-    };
-
-    const handleEdit = (character: Character): void => {
-        setSelectedCharacter(character);
-        setIsCharacterFormOpen(true);
     };
 
     const handleSaveCharacter = async (character: Character): Promise<void> => {
@@ -81,11 +78,7 @@ function CharacterPage(): React.JSX.Element {
 
     return (
         <div>
-            <CardList
-                characters={characters}
-                onEdit={handleEdit}
-                onCreate={handleCreate}
-            />
+            <CardList characters={characters} onEdit={handleEdit} onCreate={handleCreate} />
             <TemplateSelector
                 open={isTemplateSelectorOpen}
                 templates={templates}
@@ -95,20 +88,11 @@ function CharacterPage(): React.JSX.Element {
             <CharacterForm
                 open={isCharacterFormOpen}
                 character={selectedCharacter}
+                template={selectedTemplate}
                 fields={fields}
                 onSave={handleSaveCharacter}
                 onCancel={handleCloseCharacterForm}
             />
-            <div>
-                {/* Debug Data */}
-                <pre>isTemplateSelectorOpen: {isTemplateSelectorOpen}</pre>
-                <pre>isCharacterFormOpen: {isCharacterFormOpen}</pre>
-                <pre>selectedCharacter: {JSON.stringify(selectedCharacter, null, 2)}</pre>
-                <pre>selectedTemplate: {JSON.stringify(selectedTemplate, null, 2)}</pre>
-                <pre>characters: {characters.length} {JSON.stringify(characters, null, 2)}</pre>
-                <pre>templates: {templates.length} {JSON.stringify(templates, null, 2)}</pre>
-                <pre>fields: {fields.length} {JSON.stringify(fields, null, 2)}</pre>
-            </div>
         </div>
     );
 }

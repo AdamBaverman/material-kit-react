@@ -1,29 +1,35 @@
-import React from 'react';
-import { Autocomplete, TextField } from '@mui/material';
+import React, { useState } from 'react';
+import { Autocomplete, TextField, Button } from '@mui/material';
 import { type Field } from '@/types';
 
 interface FieldSelectorProps {
     availableFields: Field[];
-    onAddField: (fields: Field) => void;
+    onAddFields: (fields: Field[]) => void;
 }
 
-function FieldSelector({ availableFields, onAddField }: FieldSelectorProps): React.JSX.Element {
-    const handleAddField: (event: React.ChangeEvent<NonNullable<unknown>>, value: Field | null) => void = (
-        event,
-        value
-    ) => {
-        if (value) {
-            onAddField(value);
-        }
+function FieldSelector({ availableFields, onAddFields }: FieldSelectorProps): React.JSX.Element {
+    const [selectedFields, setSelectedFields] = useState<Field[]>([]);
+
+    const handleAddFields = (): void => {
+        console.log('selectedFields', selectedFields);
+        onAddFields(selectedFields);
+        setSelectedFields([]);
     };
 
     return (
-        <Autocomplete
-            options={availableFields}
-            getOptionLabel={(option) => option.headerName}
-            renderInput={(params) => <TextField {...params} label="Добавить поле" />}
-            onChange={handleAddField}
-        />
+        <div>
+            <Autocomplete
+                multiple
+                options={availableFields}
+                getOptionLabel={(option) => option.headerName}
+                value={selectedFields}
+                onChange={(event, newValue) => { setSelectedFields(newValue); }}
+                renderInput={(params) => <TextField {...params} label="Добавить поля" />}
+            />
+            <Button variant="contained" color="primary" onClick={handleAddFields} disabled={!selectedFields.length}>
+                Добавить
+            </Button>
+        </div>
     );
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button, Switch, FormControlLabel } from '@mui/material';
+import { Dialog, DialogTitle, DialogContent, DialogActions, TextField, Button } from '@mui/material';
 import { useForm, Controller } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
@@ -22,37 +22,54 @@ const characterSchema = z.object({
 });
 
 function CharacterForm({ open, character, template, fields, onSave, onCancel }: CharacterFormProps): React.JSX.Element {
-    const [isEditingFields, setIsEditingFields] = useState(false);
-    const { control, handleSubmit, reset } = useForm<z.infer<typeof characterSchema>>({
+    const { control, handleSubmit, reset, setValue, getValues } = useForm<z.infer<typeof characterSchema>>({
         resolver: zodResolver(characterSchema),
         defaultValues: character || { name: '', description: '', fields: {} },
     });
 
+    const [availableFields, setAvailableFields] = useState<Field[]>([]);
+
     useEffect(() => {
-        const defaultFields = template?.fields.reduce((acc, field) => {
-            acc[field] = '';
-            return acc;
-        }, {});
+        const defaultFields: Record<string, string> = {};
+        if (template?.fields) {
+          for (const fieldName of template.fields) {
+            const field = fields.find((f) => f.field === fieldName);
+            if (field) {
+              defaultFields[field.field] = character?.fields[field.field] || '';
+            }
+          }
+        }
+    
+        reset({ ...character, fields: { ...character?.fields, ...defaultFields } });
+        setAvailableFields(fields.filter((field) => !defaultFields.hasOwnProperty(field.field)));
+      }, [character, template, fields, reset]);
 
-        reset(character || { name: '', description: '', fields: defaultFields || {} });
-    }, [character, template, reset]);
+    useEffect(() => {
+        const characterFields = getValues('fields');
+        const availableFieldsFetch = fields.filter((field) => !characterFields.hasOwnProperty(field.field));
+        setAvailableFields(availableFieldsFetch);
+    }, [fields, getValues]);
 
-    const handleAddField = (field: Field) => {
-        const updatedFields = { ...control._defaultValues.fields, [field.field]: '' };
-        reset({ ...control._defaultValues, fields: updatedFields });
+    const handleAddFields = (newFields: Field[]) => {
+        const currentFields = getValues('fields');
+        const updatedFields = { ...currentFields };
+        for (const field of newFields) {
+            updatedFields[field.field] = '';
+        }
+        setValue('fields', updatedFields);
+        setAvailableFields((prevFields) => prevFields.filter((field) => !newFields.some((f) => f.field === field.field)));
     };
 
     const handleRemoveField = (fieldName: string) => {
-        const updatedFields = { ...control._defaultValues.fields };
-        delete updatedFields[fieldName];
-        reset({ ...control._defaultValues, fields: updatedFields });
+        const currentFields = getValues('fields');
+        delete currentFields[fieldName];
+        setValue('fields', currentFields);
+        setAvailableFields((prevFields) => [...prevFields, fields.find((f) => f.field === fieldName)!]);
     };
 
     const onSubmit = (data: z.infer<typeof characterSchema>) => {
         onSave(data as Character);
     };
-
-    const characterFields = control._defaultValues.fields || {};
 
     return (
         <Dialog open={open} onClose={onCancel}>
@@ -69,28 +86,25 @@ function CharacterForm({ open, character, template, fields, onSave, onCancel }: 
                         control={control}
                         render={({ field }) => <TextField {...field} label="Описание" fullWidth margin="normal" />}
                     />
-                    <FormControlLabel
-                        control={<Switch checked={isEditingFields} onChange={(e) => setIsEditingFields(e.target.checked)} />}
-                        label="Редактировать поля"
+                    <FieldSelector
+                        availableFields={availableFields}
+                        onAddFields={handleAddFields}
                     />
-                    {isEditingFields ? <>
-                            <FieldSelector
-                                availableFields={fields.filter((field) => !characterFields.hasOwnProperty(field.field))}
-                                onAddField={handleAddField}
-                            />
-                            {Object.entries(characterFields).map(([fieldName, value]) => (
-                                <div key={fieldName}>
-                                    <TextField
-                                        label={fields.find((field) => field.field === fieldName)?.headerName || fieldName}
-                                        value={value}
-                                        onChange={(e) => reset({ ...control._defaultValues, fields: { ...characterFields, [fieldName]: e.target.value } })}
-                                        fullWidth
-                                        margin="normal"
-                                    />
-                                    <Button onClick={() => handleRemoveField(fieldName)}>Удалить</Button>
-                                </div>
-                            ))}
-                        </> : null}
+                    {Object.entries(getValues('fields')).map(([fieldName, value]) => {
+                        const field = fields.find((f) => f.field === fieldName);
+                        return (
+                            <div key={fieldName}>
+                                <TextField
+                                    label={field?.headerName || fieldName}
+                                    value={value}
+                                    onChange={(e) => { setValue('fields', { ...getValues('fields'), [fieldName]: e.target.value }); }}
+                                    fullWidth
+                                    margin="normal"
+                                />
+                                <Button onClick={() => { handleRemoveField(fieldName); }}>Удалить</Button>
+                            </div>
+                        );
+                    })}
                 </form>
             </DialogContent>
             <DialogActions>
