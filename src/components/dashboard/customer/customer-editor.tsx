@@ -279,8 +279,7 @@ function CustomerEditor({
                 <Button variant="outlined" onClick={() => setIsEditingFields(!isEditingFields)}>
                     {isEditingFields ? 'Закрыть редактор полей' : 'Редактировать поля'}
                 </Button>
-                {isEditingFields && (
-                    <UIStoreProvider store={store} onChange={setStore} showValidity>
+                {isEditingFields ? <UIStoreProvider store={store} onChange={setStore} showValidity>
                         <Box sx={{ mb: 2 }}>
                             <Typography variant="h6">Добавить поле</Typography>
                             <Stack direction="row" spacing={2}>
@@ -315,8 +314,7 @@ function CustomerEditor({
                                     )}
                             </Stack>
                         </Box>
-                    </UIStoreProvider>
-                )}
+                    </UIStoreProvider> : null}
             </DialogContent>
             <DialogActions>
                 <Button onClick={onCancel}>Отмена</Button>
